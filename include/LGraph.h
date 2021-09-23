@@ -2,98 +2,109 @@
 
 #include <iostream>
 #include <vector>
-#include "../include/MGraph.h"
+#include <algorithm>
+#include <functional>
+
 
 
 class ListGraph : public IGraph
 {
 private:
-    void initial(const ListGraph& lg)
-    {
-        numberOfVertices = lg.numberOfVertices;
-        g = lg.g;
-    }
+	
+	//Списки смежности
+	std::vector<std::vector<int>> g;
+
+	//Функция инициализации графа матрицей смежности
+	void init(const IGraph& mg);
 public:
-    ListGraph() {}
+	ListGraph() {}
 
-    ListGraph(const ListGraph& lg)
-    {
-        initial(lg);
-    }
+	ListGraph(const ListGraph& lg) : IGraph(lg)
+	{
+		g = lg.g;
+	}
 
-    ListGraph& operator=(const ListGraph& lg)
-    {
-        if (this == &lg) return *this;
-        initial(lg);
-        return *this;
-    }
+	ListGraph(ListGraph* lg) : IGraph(lg)
+	{
+		g = lg->g;
+	}
 
-    ListGraph(ListGraph* lg)
-    {
-        numberOfVertices = lg->numberOfVertices;
-        g = lg->g;
-    }
+	ListGraph& operator=(const ListGraph& lg)
+	{
+		if (this == &lg) return *this;
 
-    ListGraph(MatrixGraph* mg);
+		g = lg.g;
 
+		return *this;
+	}
 
-    void input() override
-    {
-        std::cout << "\nEnter the vertex numbers of the graph. To finish entering \n" <<
-                  "an array of lists, enter a non-numeric character. Example:\n\n";
+	ListGraph& operator=(ListGraph* lg)
+	{
+		if (this == lg) return *this;
 
-        std::cout << "2\n";
-        std::cout << "4 5\n";
-        std::cout << "1 4\n";
-        std::cout << "1 3\n";
-        std::cout << "q\n\n";
+		g = lg->g;
 
-        int number;
-        std::vector<int> tmp;
+		return *this;
+	}
 
-        for (int j{}; ; ++j)
-        {
-            g.push_back(tmp);
-            ++numberOfVertices;
-            std::cout << "g[" << j + 1 << "]: ";
+	ListGraph(IGraph* mg)
+	{
+		init(*mg);
+	}
 
-            char ch{};
-            while (true)
-            {
-                do {
-                    std::cin.get(ch);
-                } while (ch == ' ' || ch == '\t');
+	ListGraph(IGraph& mg)
+	{
+		init(mg);
+	}
 
-                if (ch == '\n') break;
+	ListGraph& operator=(const IGraph& mg)
+	{
+		init(mg);
 
-                std::cin.unget();
+		return *this;
+	}
 
-                std::cin >> number;
-                if (!cinNoFail()) return;
+	ListGraph& operator=(const IGraph* mg)
+	{
+		init(*mg);
 
-                g[j].push_back(number);
-            }
+		return *this;
+	}
 
-            tmp.clear();
-        }
-    }
+	virtual ~ListGraph() {}
 
-    void output()
-    {
-        std::cout << "\nList:\n";
+	//Получение списков смежности
+	const std::vector<std::vector<int>>& getG() const override
+	{
+		return g;
+	}
 
-        for (size_t j{}; j < g.size(); ++j)
-        {
-            std::cout << "g[" << j + 1 << "]: ";
+	//Получение списков смежности
+	std::vector<std::vector<int>>& getG() override
+	{
+		return g;
+	}
 
-            for (size_t i{}; i < g[j].size(); ++i)
-            {
-                std::cout << g[j][i] << ' ';
-            }
+	//Получение количества вершин
+	const size_t VerticesCount() const override
+	{
+		return g.size();
+	}
 
-            std::cout << '\n';
-        }
-    }
+	//Функция построения списков смежности, если количество вершин заранее не известно
+	void AddEdge(int from, int to) override;
+private:
+	
+	//Если вершина не имеет петли - удалить
+	void isLoop(std::vector<int>& visited, int vertex) const;
+public:
+	
+	//Все вершины, в которые можно дойти из заданной
+	void GetNextVertices(int vertex, std::vector<int>& nextVertices) const override;
 
+	//Все вершины, из которых можно дойти в заданную
+	void GetPrevVertices(int vertex, std::vector<int>& prevVertices) const override;
+
+	//Вывод графа
+	void output() const override;
 };
-

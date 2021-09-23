@@ -2,85 +2,109 @@
 
 #include <iostream>
 #include <vector>
-#include "../include/LGraph.h"
+#include <algorithm>
+#include <functional>
+
+
 
 class MatrixGraph : public IGraph
 {
 private:
-    void initial(const MatrixGraph& mg)
-    {
-        numberOfVertices = mg.numberOfVertices;
-        g = mg.g;
-    }
+	
+	//Матрица смежности
+	std::vector<std::vector<int>> g;
+
+	//Функция инициализации графа списками смежности
+	void init(const IGraph& lg);
 public:
-    MatrixGraph() {}
+	MatrixGraph() {}
 
-    MatrixGraph(const MatrixGraph& mg)
-    {
-        initial(mg);
-    }
+	MatrixGraph(const MatrixGraph& mg) : IGraph(mg)
+	{
+		g = mg.g;
+	}
 
-    MatrixGraph& operator=(const MatrixGraph& mg)
-    {
-        if (this == &mg) return *this;
-        initial(mg);
-        return *this;
-    }
+	MatrixGraph(MatrixGraph* mg) : IGraph(mg)
+	{
+		g = mg->g;
+	}
 
-    MatrixGraph(MatrixGraph* mg)
-    {
-        numberOfVertices = mg->numberOfVertices;
-        g = mg->g;
-    }
+	MatrixGraph& operator=(const MatrixGraph& mg)
+	{
+		if (this == &mg) return *this;
 
-    MatrixGraph(ListGraph* lg);
+		g = mg.g;
+	
+		return *this;
+	}
 
-    void input() override
-    {
-        while (true)
-        {
-            std::cout << "Enter the number of vertices: ";
-            std::cin >> numberOfVertices;
-            if (cinNoFail()) break;
-            std::cout << "Invalid data!\n";
-        }
+	MatrixGraph& operator=(const MatrixGraph* mg)
+	{
+		if (this == mg) return *this;
 
-        std::cout << "\nEnter the numbers of vertices connected by edges. To finish entering \n" <<
-                  "enter a non-numeric character. Example:\n\n";
+		g = mg->g;
+	
+		return *this;
+	}
 
-        std::cout << "1 2\n";
-        std::cout << "2 4 2 5\n";
-        std::cout << "3 1 3 4\n";
-        std::cout << "4 1 4 3\n";
-        std::cout << "q\n\n";
+	MatrixGraph(IGraph* lg)
+	{
+		init(*lg);
+	}
 
-        int vertexNumber1, vertexNumber2;
-        std::vector<int> tmp(numberOfVertices);
+	MatrixGraph(IGraph& lg)
+	{
+		init(lg);
+	}
 
-        for (int i{}; i < numberOfVertices; ++i)
-            g.push_back(tmp);
+	MatrixGraph& operator=(const IGraph& lg)
+	{
+		init(lg);
+	
+		return *this;
+	}
 
-        while (true)
-        {
-            std::cin >> vertexNumber1 >> vertexNumber2;
-            if (!cinNoFail()) return;
+	MatrixGraph& operator=(const IGraph* lg)
+	{
+		init(*lg);
 
-            g[--vertexNumber1][--vertexNumber2] = 1;
-        }
-    }
+		return *this;
+	}
 
-    void output()
-    {
-        std::cout << "\nMatrix:\n";
+	virtual ~MatrixGraph() {}
 
-        for (size_t j{}; j < g.size(); ++j)
-        {
-            for (size_t i{}; i < g[j].size(); ++i)
-            {
-                std::cout << g[j][i] << ' ';
-            }
+	//Получение матрицы смежности
+	const std::vector<std::vector<int>>& getG() const override
+	{
+		return g;
+	}
 
-            std::cout << '\n';
-        }
-    }
+	//Получение матрицы смежности
+	std::vector<std::vector<int>>& getG() override
+	{
+		return g;
+	}
+
+	//Получение количества вершин
+	const size_t VerticesCount() const override
+	{
+		return g.size();
+	}
+
+	//Функция построения матрицы смежности, если количество вершин заранее не известно
+	void AddEdge(int from, int to) override;
+private:
+	
+	//Если вершина не имеет петли - удалить
+	void isLoop(std::vector<int>& visited, int vertex) const;
+public:
+	
+	//Все вершины, в которые можно дойти из заданной
+	void GetNextVertices(int vertex, std::vector<int>& nextVertices) const override;
+
+	//Все вершины, из которых можно дойти в заданную
+	void GetPrevVertices(int vertex, std::vector<int>& prevVertices) const override;
+
+	//Вывод графа
+	void output() const override;
 };
