@@ -2,121 +2,121 @@
 #include "LGraph.h"
 #include "MGraph.h"
 
-//Функция инициализации графа списками смежности
+//Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РіСЂР°С„Р° СЃРїРёСЃРєР°РјРё СЃРјРµР¶РЅРѕСЃС‚Рё
 void MatrixGraph::init(const IGraph& lg)
 {
-	g.clear();
+    g.clear();
 
-	std::vector<int> tmp(lg.VerticesCount());
+    std::vector<int> tmp(lg.VerticesCount());
 
-	for (size_t i{}; i < lg.VerticesCount(); ++i)
-		g.push_back(tmp);
+    for (size_t i{}; i < lg.VerticesCount(); ++i)
+        g.push_back(tmp);
 
-	for (size_t j{}; j < lg.VerticesCount(); ++j)
-	{
-		for (size_t i{}; i < lg.getG()[j].size(); ++i)
-		{
-			g[j][lg.getG()[j][i] - 1] = 1;
-		}
-	}
+    for (size_t j{}; j < lg.VerticesCount(); ++j)
+    {
+        for (size_t i{}; i < lg.getG()[j].size(); ++i)
+        {
+            g[j][lg.getG()[j][i] - 1] = 1;
+        }
+    }
 }
 
-//Функция построения матрицы смежности, если количество вершин заранее не известно
+//Р¤СѓРЅРєС†РёСЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ РјР°С‚СЂРёС†С‹ СЃРјРµР¶РЅРѕСЃС‚Рё, РµСЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ Р·Р°СЂР°РЅРµРµ РЅРµ РёР·РІРµСЃС‚РЅРѕ
 void MatrixGraph::AddEdge(int from, int to)
 {
-	size_t numberOfVertices = VerticesCount();
+    size_t numberOfVertices = VerticesCount();
 
-	//Определить текущее количество вершин
-	if (numberOfVertices < from || numberOfVertices < to)
-		numberOfVertices = (from >= to ? from : to);
+    //РћРїСЂРµРґРµР»РёС‚СЊ С‚РµРєСѓС‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ
+    if (numberOfVertices < from || numberOfVertices < to)
+        numberOfVertices = (from >= to ? from : to);
 
-	std::vector<int> tmp(numberOfVertices);
+    std::vector<int> tmp(numberOfVertices);
 
-	//Добавить строки по текущему количеству вершин 
-	while (g.size() < numberOfVertices)
-		g.push_back(tmp);
+    //Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРѕРєРё РїРѕ С‚РµРєСѓС‰РµРјСѓ РєРѕР»РёС‡РµСЃС‚РІСѓ РІРµСЂС€РёРЅ
+    while (g.size() < numberOfVertices)
+        g.push_back(tmp);
 
-	//Заполнить предыдущие строки "0-ми" до текущего количества вершин
-	for (size_t j{}; j < g.size() - 1; ++j)
-		while (g[j].size() < numberOfVertices)
-			g[j].push_back(0);
+    //Р—Р°РїРѕР»РЅРёС‚СЊ РїСЂРµРґС‹РґСѓС‰РёРµ СЃС‚СЂРѕРєРё "0-РјРё" РґРѕ С‚РµРєСѓС‰РµРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
+    for (size_t j{}; j < g.size() - 1; ++j)
+        while (g[j].size() < numberOfVertices)
+            g[j].push_back(0);
 
-	//Если вершина несвязанная
-	if (to == 0) return;
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµСЃРІСЏР·Р°РЅРЅР°СЏ
+    if (to == 0) return;
 
-	g[from - 1][to - 1] = 1;
+    g[from - 1][to - 1] = 1;
 }
 
-//Если вершина не имеет петли - удалить
+//Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
 void MatrixGraph::isLoop(std::vector<int>& vertices, int vertex) const
 {
-	if (!g[vertex - 1][vertex - 1])
-	{
-		std::swap(vertices.front(), vertices.back());
-		vertices.pop_back();
-	}
+    if (!g[vertex - 1][vertex - 1])
+    {
+        std::swap(vertices.front(), vertices.back());
+        vertices.pop_back();
+    }
 }
 
-//Все вершины, в которые можно дойти из заданной
+//Р’СЃРµ РІРµСЂС€РёРЅС‹, РІ РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РґРѕР№С‚Рё РёР· Р·Р°РґР°РЅРЅРѕР№
 void MatrixGraph::GetNextVertices(int vertex, std::vector<int>& nextVertices) const
 {
-	nextVertices.clear();
-	
-	//Стандартный рекурсивный алгоритм (обход из начала в конец ребра)
-	std::function<void(int)> dfs = [&](int vertex)
-	{
-		nextVertices.push_back(vertex);
+    nextVertices.clear();
 
-		for (size_t i{}; i < VerticesCount(); ++i)
-			//Если вершину не посещали - переход к следующей вершине
-			if (g[vertex - 1][i] && std::find(nextVertices.begin(), nextVertices.end(), i + 1) == nextVertices.end())
-				dfs(i + 1);
-	};
+    //РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј (РѕР±С…РѕРґ РёР· РЅР°С‡Р°Р»Р° РІ РєРѕРЅРµС† СЂРµР±СЂР°)
+    std::function<void(int)> dfs = [&](int vertex)
+    {
+        nextVertices.push_back(vertex);
 
-	dfs(vertex);
+        for (size_t i{}; i < VerticesCount(); ++i)
+            //Р•СЃР»Рё РІРµСЂС€РёРЅСѓ РЅРµ РїРѕСЃРµС‰Р°Р»Рё - РїРµСЂРµС…РѕРґ Рє СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂС€РёРЅРµ
+            if (g[vertex - 1][i] && std::find(nextVertices.begin(), nextVertices.end(), i + 1) == nextVertices.end())
+                dfs(i + 1);
+    };
 
-	//Если вершина не имеет петли - удалить
-	isLoop(nextVertices, vertex);
+    dfs(vertex);
 
-	std::sort(nextVertices.begin(), nextVertices.end());
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
+    isLoop(nextVertices, vertex);
+
+    std::sort(nextVertices.begin(), nextVertices.end());
 }
 
-//Все вершины, из которых можно дойти в заданную
+//Р’СЃРµ РІРµСЂС€РёРЅС‹, РёР· РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ РґРѕР№С‚Рё РІ Р·Р°РґР°РЅРЅСѓСЋ
 void MatrixGraph::GetPrevVertices(int vertex, std::vector<int>& prevVertices) const
 {
-	prevVertices.clear();
-	
-	//Стандартный рекурсивный алгоритм (обход из конца в начало ребра)
-	std::function<void(int)> dfs = [&](int vertex)
-	{
-		prevVertices.push_back(vertex);
+    prevVertices.clear();
 
-		for (size_t i{}; i < VerticesCount(); ++i)
-			//Если вершину не посещали - переход к следующей вершине
-			if (g[i][vertex - 1] && std::find(prevVertices.begin(), prevVertices.end(), i + 1) == prevVertices.end())
-				dfs(i + 1);
-	};
+    //РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј (РѕР±С…РѕРґ РёР· РєРѕРЅС†Р° РІ РЅР°С‡Р°Р»Рѕ СЂРµР±СЂР°)
+    std::function<void(int)> dfs = [&](int vertex)
+    {
+        prevVertices.push_back(vertex);
 
-	dfs(vertex);
+        for (size_t i{}; i < VerticesCount(); ++i)
+            //Р•СЃР»Рё РІРµСЂС€РёРЅСѓ РЅРµ РїРѕСЃРµС‰Р°Р»Рё - РїРµСЂРµС…РѕРґ Рє СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂС€РёРЅРµ
+            if (g[i][vertex - 1] && std::find(prevVertices.begin(), prevVertices.end(), i + 1) == prevVertices.end())
+                dfs(i + 1);
+    };
 
-	//Если вершина не имеет петли - удалить
-	isLoop(prevVertices, vertex);
+    dfs(vertex);
 
-	std::sort(prevVertices.begin(), prevVertices.end());
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
+    isLoop(prevVertices, vertex);
+
+    std::sort(prevVertices.begin(), prevVertices.end());
 }
 
-//Вывод графа
+//Р’С‹РІРѕРґ РіСЂР°С„Р°
 void MatrixGraph::output() const
 {
-	std::cout << "\nMatrix:\n";
+    std::cout << "\nMatrix:\n";
 
-	for (size_t j{}; j < VerticesCount(); ++j)
-	{
-		for (size_t i{}; i < VerticesCount(); ++i)
-		{
-			std::cout << g[j][i] << ' ';
-		}
+    for (size_t j{}; j < VerticesCount(); ++j)
+    {
+        for (size_t i{}; i < VerticesCount(); ++i)
+        {
+            std::cout << g[j][i] << ' ';
+        }
 
-		std::cout << '\n';
-	}
+        std::cout << '\n';
+    }
 }

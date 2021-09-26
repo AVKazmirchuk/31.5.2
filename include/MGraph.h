@@ -10,101 +10,101 @@
 class MatrixGraph : public IGraph
 {
 private:
-	
-	//Матрица смежности
-	std::vector<std::vector<int>> g;
 
-	//Функция инициализации графа списками смежности
-	void init(const IGraph& lg);
+    //РњР°С‚СЂРёС†Р° СЃРјРµР¶РЅРѕСЃС‚Рё
+    std::vector<std::vector<int>> g;
+
+    //Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РіСЂР°С„Р° СЃРїРёСЃРєР°РјРё СЃРјРµР¶РЅРѕСЃС‚Рё
+    void init(const IGraph& lg);
 public:
-	MatrixGraph() {}
+    MatrixGraph() {}
 
-	MatrixGraph(const MatrixGraph& mg) : IGraph(mg)
-	{
-		g = mg.g;
-	}
+    MatrixGraph(const MatrixGraph& mg) : IGraph(mg)
+    {
+        g = mg.g;
+    }
 
-	MatrixGraph(MatrixGraph* mg) : IGraph(mg)
-	{
-		g = mg->g;
-	}
+    MatrixGraph(MatrixGraph* mg) : IGraph(mg)
+    {
+        g = mg->g;
+    }
 
-	MatrixGraph& operator=(const MatrixGraph& mg)
-	{
-		if (this == &mg) return *this;
+    MatrixGraph& operator=(const MatrixGraph& mg)
+    {
+        if (this == &mg) return *this;
 
-		g = mg.g;
-	
-		return *this;
-	}
+        g = mg.g;
 
-	MatrixGraph& operator=(const MatrixGraph* mg)
-	{
-		if (this == mg) return *this;
+        return *this;
+    }
 
-		g = mg->g;
-	
-		return *this;
-	}
+    MatrixGraph& operator=(const MatrixGraph* mg)
+    {
+        if (this == mg) return *this;
 
-	MatrixGraph(IGraph* lg)
-	{
-		init(*lg);
-	}
+        g = mg->g;
 
-	MatrixGraph(IGraph& lg)
-	{
-		init(lg);
-	}
+        return *this;
+    }
 
-	MatrixGraph& operator=(const IGraph& lg)
-	{
-		init(lg);
-	
-		return *this;
-	}
+    MatrixGraph(IGraph* lg)
+    {
+        init(*lg);
+    }
 
-	MatrixGraph& operator=(const IGraph* lg)
-	{
-		init(*lg);
+    MatrixGraph(IGraph& lg)
+    {
+        init(lg);
+    }
 
-		return *this;
-	}
+    MatrixGraph& operator=(const IGraph& lg)
+    {
+        init(lg);
 
-	virtual ~MatrixGraph() {}
+        return *this;
+    }
 
-	//Получение матрицы смежности
-	const std::vector<std::vector<int>>& getG() const override
-	{
-		return g;
-	}
+    MatrixGraph& operator=(const IGraph* lg)
+    {
+        init(*lg);
 
-	//Получение матрицы смежности
-	std::vector<std::vector<int>>& getG() override
-	{
-		return g;
-	}
+        return *this;
+    }
 
-	//Получение количества вершин
-	const size_t VerticesCount() const override
-	{
-		return g.size();
-	}
+    virtual ~MatrixGraph() {}
 
-	//Функция построения матрицы смежности, если количество вершин заранее не известно
-	void AddEdge(int from, int to) override;
+    //РџРѕР»СѓС‡РµРЅРёРµ РјР°С‚СЂРёС†С‹ СЃРјРµР¶РЅРѕСЃС‚Рё
+    const std::vector<std::vector<int>>& getG() const override
+    {
+        return g;
+    }
+
+    //РџРѕР»СѓС‡РµРЅРёРµ РјР°С‚СЂРёС†С‹ СЃРјРµР¶РЅРѕСЃС‚Рё
+    std::vector<std::vector<int>>& getG() override
+    {
+        return g;
+    }
+
+    //РџРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
+    const size_t VerticesCount() const override
+    {
+        return g.size();
+    }
+
+    //Р¤СѓРЅРєС†РёСЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ РјР°С‚СЂРёС†С‹ СЃРјРµР¶РЅРѕСЃС‚Рё, РµСЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ Р·Р°СЂР°РЅРµРµ РЅРµ РёР·РІРµСЃС‚РЅРѕ
+    void AddEdge(int from, int to) override;
 private:
-	
-	//Если вершина не имеет петли - удалить
-	void isLoop(std::vector<int>& visited, int vertex) const;
+
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
+    void isLoop(std::vector<int>& visited, int vertex) const;
 public:
-	
-	//Все вершины, в которые можно дойти из заданной
-	void GetNextVertices(int vertex, std::vector<int>& nextVertices) const override;
 
-	//Все вершины, из которых можно дойти в заданную
-	void GetPrevVertices(int vertex, std::vector<int>& prevVertices) const override;
+    //Р’СЃРµ РІРµСЂС€РёРЅС‹, РІ РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РґРѕР№С‚Рё РёР· Р·Р°РґР°РЅРЅРѕР№
+    void GetNextVertices(int vertex, std::vector<int>& nextVertices) const override;
 
-	//Вывод графа
-	void output() const override;
+    //Р’СЃРµ РІРµСЂС€РёРЅС‹, РёР· РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ РґРѕР№С‚Рё РІ Р·Р°РґР°РЅРЅСѓСЋ
+    void GetPrevVertices(int vertex, std::vector<int>& prevVertices) const override;
+
+    //Р’С‹РІРѕРґ РіСЂР°С„Р°
+    void output() const override;
 };

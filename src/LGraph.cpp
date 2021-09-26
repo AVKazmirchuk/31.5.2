@@ -2,120 +2,120 @@
 #include "LGraph.h"
 #include "MGraph.h"
 
-//Функция инициализации графа матрицей смежности
+//Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РіСЂР°С„Р° РјР°С‚СЂРёС†РµР№ СЃРјРµР¶РЅРѕСЃС‚Рё
 void ListGraph::init(const IGraph& mg)
 {
-	g.clear();
+    g.clear();
 
-	std::vector<int> tmp;
+    std::vector<int> tmp;
 
-	for (size_t j{}; j < mg.VerticesCount(); ++j)
-	{
-		for (size_t i{}; i < mg.VerticesCount(); ++i)
-		{
-			if (mg.getG()[j][i]) tmp.push_back(i + 1);
-		}
+    for (size_t j{}; j < mg.VerticesCount(); ++j)
+    {
+        for (size_t i{}; i < mg.VerticesCount(); ++i)
+        {
+            if (mg.getG()[j][i]) tmp.push_back(i + 1);
+        }
 
-		g.push_back(tmp);
-		tmp.clear();
-	}
+        g.push_back(tmp);
+        tmp.clear();
+    }
 }
 
-//Функция построения списков смежности, если количество вершин заранее не известно
+//Р¤СѓРЅРєС†РёСЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ СЃРїРёСЃРєРѕРІ СЃРјРµР¶РЅРѕСЃС‚Рё, РµСЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ Р·Р°СЂР°РЅРµРµ РЅРµ РёР·РІРµСЃС‚РЅРѕ
 void ListGraph::AddEdge(int from, int to)
 {
-	size_t numberOfVertices = VerticesCount();
+    size_t numberOfVertices = VerticesCount();
 
-	//Определить текущее количество вершин
-	if (numberOfVertices < from || numberOfVertices < to)
-		numberOfVertices = (from >= to ? from : to);
+    //РћРїСЂРµРґРµР»РёС‚СЊ С‚РµРєСѓС‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ
+    if (numberOfVertices < from || numberOfVertices < to)
+        numberOfVertices = (from >= to ? from : to);
 
-	std::vector<int> tmp;
+    std::vector<int> tmp;
 
-	//Добавить строки по текущему количеству вершин 
-	while (g.size() < numberOfVertices)
-		g.push_back(tmp);
+    //Р”РѕР±Р°РІРёС‚СЊ СЃС‚СЂРѕРєРё РїРѕ С‚РµРєСѓС‰РµРјСѓ РєРѕР»РёС‡РµСЃС‚РІСѓ РІРµСЂС€РёРЅ
+    while (g.size() < numberOfVertices)
+        g.push_back(tmp);
 
-	//Если вершина связанная
-	if (to != 0) g[from - 1].push_back(to);
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° СЃРІСЏР·Р°РЅРЅР°СЏ
+    if (to != 0) g[from - 1].push_back(to);
 }
 
-//Если вершина не имеет петли - удалить
+//Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
 void ListGraph::isLoop(std::vector<int>& vertices, int vertex) const
 {
-	auto pos = std::find(g[vertex - 1].begin(), g[vertex - 1].end(), vertex);
+    auto pos = std::find(g[vertex - 1].begin(), g[vertex - 1].end(), vertex);
 
-	if (pos == g[vertex - 1].end())
-	{
-		std::swap(vertices.front(), vertices.back());
-		vertices.pop_back();
-	}
+    if (pos == g[vertex - 1].end())
+    {
+        std::swap(vertices.front(), vertices.back());
+        vertices.pop_back();
+    }
 }
 
-//Все вершины, в которые можно дойти из заданной
+//Р’СЃРµ РІРµСЂС€РёРЅС‹, РІ РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РґРѕР№С‚Рё РёР· Р·Р°РґР°РЅРЅРѕР№
 void ListGraph::GetNextVertices(int vertex, std::vector<int>& nextVertices) const
 {
-	nextVertices.clear();
-	
-	//Стандартный рекурсивный алгоритм (обход из начала в конец ребра)
-	std::function<void(int)> dfs = [&](int vertex)
-	{
-		nextVertices.push_back(vertex);
+    nextVertices.clear();
 
-		for (auto nextVertex : g[vertex - 1])
-			//Если вершину не посещали - переход к следующей вершине
-			if (std::find(nextVertices.begin(), nextVertices.end(), nextVertex) == nextVertices.end())
-				dfs(nextVertex);
-	};
+    //РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј (РѕР±С…РѕРґ РёР· РЅР°С‡Р°Р»Р° РІ РєРѕРЅРµС† СЂРµР±СЂР°)
+    std::function<void(int)> dfs = [&](int vertex)
+    {
+        nextVertices.push_back(vertex);
 
-	dfs(vertex);
+        for (auto nextVertex : g[vertex - 1])
+            //Р•СЃР»Рё РІРµСЂС€РёРЅСѓ РЅРµ РїРѕСЃРµС‰Р°Р»Рё - РїРµСЂРµС…РѕРґ Рє СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂС€РёРЅРµ
+            if (std::find(nextVertices.begin(), nextVertices.end(), nextVertex) == nextVertices.end())
+                dfs(nextVertex);
+    };
 
-	//Если вершина не имеет петли - удалить
-	isLoop(nextVertices, vertex);
+    dfs(vertex);
 
-	std::sort(nextVertices.begin(), nextVertices.end());
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
+    isLoop(nextVertices, vertex);
+
+    std::sort(nextVertices.begin(), nextVertices.end());
 }
 
-//Все вершины, из которых можно дойти в заданную
+//Р’СЃРµ РІРµСЂС€РёРЅС‹, РёР· РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ РґРѕР№С‚Рё РІ Р·Р°РґР°РЅРЅСѓСЋ
 void ListGraph::GetPrevVertices(int vertex, std::vector<int>& prevVertices) const
 {
-	prevVertices.clear();
-	
-	//Стандартный рекурсивный алгоритм (обход из конца в начало ребра)
-	std::function<void(int)> dfs = [&](int vertex)
-	{
-		prevVertices.push_back(vertex);
+    prevVertices.clear();
 
-		for (size_t i{}; i < VerticesCount(); ++i)
-			for (auto nextVertex : g[i])
-				if (nextVertex == vertex)
-					//Если вершину не посещали - переход к следующей вершине
-					if (std::find(prevVertices.begin(), prevVertices.end(), i + 1) == prevVertices.end())
-						dfs(i + 1);
-	};
+    //РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј (РѕР±С…РѕРґ РёР· РєРѕРЅС†Р° РІ РЅР°С‡Р°Р»Рѕ СЂРµР±СЂР°)
+    std::function<void(int)> dfs = [&](int vertex)
+    {
+        prevVertices.push_back(vertex);
 
-	dfs(vertex);
+        for (size_t i{}; i < VerticesCount(); ++i)
+            for (auto nextVertex : g[i])
+                if (nextVertex == vertex)
+                    //Р•СЃР»Рё РІРµСЂС€РёРЅСѓ РЅРµ РїРѕСЃРµС‰Р°Р»Рё - РїРµСЂРµС…РѕРґ Рє СЃР»РµРґСѓСЋС‰РµР№ РІРµСЂС€РёРЅРµ
+                    if (std::find(prevVertices.begin(), prevVertices.end(), i + 1) == prevVertices.end())
+                        dfs(i + 1);
+    };
 
-	//Если вершина не имеет петли - удалить
-	isLoop(prevVertices, vertex);
+    dfs(vertex);
 
-	std::sort(prevVertices.begin(), prevVertices.end());
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
+    isLoop(prevVertices, vertex);
+
+    std::sort(prevVertices.begin(), prevVertices.end());
 }
 
-//Вывод графа
+//Р’С‹РІРѕРґ РіСЂР°С„Р°
 void ListGraph::output() const
 {
-	std::cout << "\nList:\n";
+    std::cout << "\nList:\n";
 
-	for (size_t j{}; j < VerticesCount(); ++j)
-	{
-		std::cout << "g[" << j + 1 << "]: ";
+    for (size_t j{}; j < VerticesCount(); ++j)
+    {
+        std::cout << "g[" << j + 1 << "]: ";
 
-		for (size_t i{}; i < g[j].size(); ++i)
-		{
-			std::cout << g[j][i] << ' ';
-		}
+        for (size_t i{}; i < g[j].size(); ++i)
+        {
+            std::cout << g[j][i] << ' ';
+        }
 
-		std::cout << '\n';
-	}
+        std::cout << '\n';
+    }
 }

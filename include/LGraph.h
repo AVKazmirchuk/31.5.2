@@ -10,101 +10,101 @@
 class ListGraph : public IGraph
 {
 private:
-	
-	//Списки смежности
-	std::vector<std::vector<int>> g;
 
-	//Функция инициализации графа матрицей смежности
-	void init(const IGraph& mg);
+    //РЎРїРёСЃРєРё СЃРјРµР¶РЅРѕСЃС‚Рё
+    std::vector<std::vector<int>> g;
+
+    //Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РіСЂР°С„Р° РјР°С‚СЂРёС†РµР№ СЃРјРµР¶РЅРѕСЃС‚Рё
+    void init(const IGraph& mg);
 public:
-	ListGraph() {}
+    ListGraph() {}
 
-	ListGraph(const ListGraph& lg) : IGraph(lg)
-	{
-		g = lg.g;
-	}
+    ListGraph(const ListGraph& lg) : IGraph(lg)
+    {
+        g = lg.g;
+    }
 
-	ListGraph(ListGraph* lg) : IGraph(lg)
-	{
-		g = lg->g;
-	}
+    ListGraph(ListGraph* lg) : IGraph(lg)
+    {
+        g = lg->g;
+    }
 
-	ListGraph& operator=(const ListGraph& lg)
-	{
-		if (this == &lg) return *this;
+    ListGraph& operator=(const ListGraph& lg)
+    {
+        if (this == &lg) return *this;
 
-		g = lg.g;
+        g = lg.g;
 
-		return *this;
-	}
+        return *this;
+    }
 
-	ListGraph& operator=(ListGraph* lg)
-	{
-		if (this == lg) return *this;
+    ListGraph& operator=(ListGraph* lg)
+    {
+        if (this == lg) return *this;
 
-		g = lg->g;
+        g = lg->g;
 
-		return *this;
-	}
+        return *this;
+    }
 
-	ListGraph(IGraph* mg)
-	{
-		init(*mg);
-	}
+    ListGraph(IGraph* mg)
+    {
+        init(*mg);
+    }
 
-	ListGraph(IGraph& mg)
-	{
-		init(mg);
-	}
+    ListGraph(IGraph& mg)
+    {
+        init(mg);
+    }
 
-	ListGraph& operator=(const IGraph& mg)
-	{
-		init(mg);
+    ListGraph& operator=(const IGraph& mg)
+    {
+        init(mg);
 
-		return *this;
-	}
+        return *this;
+    }
 
-	ListGraph& operator=(const IGraph* mg)
-	{
-		init(*mg);
+    ListGraph& operator=(const IGraph* mg)
+    {
+        init(*mg);
 
-		return *this;
-	}
+        return *this;
+    }
 
-	virtual ~ListGraph() {}
+    virtual ~ListGraph() {}
 
-	//Получение списков смежности
-	const std::vector<std::vector<int>>& getG() const override
-	{
-		return g;
-	}
+    //РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєРѕРІ СЃРјРµР¶РЅРѕСЃС‚Рё
+    const std::vector<std::vector<int>>& getG() const override
+    {
+        return g;
+    }
 
-	//Получение списков смежности
-	std::vector<std::vector<int>>& getG() override
-	{
-		return g;
-	}
+    //РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєРѕРІ СЃРјРµР¶РЅРѕСЃС‚Рё
+    std::vector<std::vector<int>>& getG() override
+    {
+        return g;
+    }
 
-	//Получение количества вершин
-	const size_t VerticesCount() const override
-	{
-		return g.size();
-	}
+    //РџРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
+    const size_t VerticesCount() const override
+    {
+        return g.size();
+    }
 
-	//Функция построения списков смежности, если количество вершин заранее не известно
-	void AddEdge(int from, int to) override;
+    //Р¤СѓРЅРєС†РёСЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ СЃРїРёСЃРєРѕРІ СЃРјРµР¶РЅРѕСЃС‚Рё, РµСЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ РІРµСЂС€РёРЅ Р·Р°СЂР°РЅРµРµ РЅРµ РёР·РІРµСЃС‚РЅРѕ
+    void AddEdge(int from, int to) override;
 private:
-	
-	//Если вершина не имеет петли - удалить
-	void isLoop(std::vector<int>& visited, int vertex) const;
+
+    //Р•СЃР»Рё РІРµСЂС€РёРЅР° РЅРµ РёРјРµРµС‚ РїРµС‚Р»Рё - СѓРґР°Р»РёС‚СЊ
+    void isLoop(std::vector<int>& visited, int vertex) const;
 public:
-	
-	//Все вершины, в которые можно дойти из заданной
-	void GetNextVertices(int vertex, std::vector<int>& nextVertices) const override;
 
-	//Все вершины, из которых можно дойти в заданную
-	void GetPrevVertices(int vertex, std::vector<int>& prevVertices) const override;
+    //Р’СЃРµ РІРµСЂС€РёРЅС‹, РІ РєРѕС‚РѕСЂС‹Рµ РјРѕР¶РЅРѕ РґРѕР№С‚Рё РёР· Р·Р°РґР°РЅРЅРѕР№
+    void GetNextVertices(int vertex, std::vector<int>& nextVertices) const override;
 
-	//Вывод графа
-	void output() const override;
+    //Р’СЃРµ РІРµСЂС€РёРЅС‹, РёР· РєРѕС‚РѕСЂС‹С… РјРѕР¶РЅРѕ РґРѕР№С‚Рё РІ Р·Р°РґР°РЅРЅСѓСЋ
+    void GetPrevVertices(int vertex, std::vector<int>& prevVertices) const override;
+
+    //Р’С‹РІРѕРґ РіСЂР°С„Р°
+    void output() const override;
 };
